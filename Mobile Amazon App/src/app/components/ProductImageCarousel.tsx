@@ -33,8 +33,9 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
       </div>
 
       {/* Dots + action icons */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200">
-        <div className="flex items-center gap-[6px]">
+      <div className="relative flex items-center px-4 py-2 border-b border-gray-200">
+        {/* Centered dots */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-[6px]">
           {images.map((_, index) => (
             <button
               key={index}
@@ -47,7 +48,8 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
             />
           ))}
         </div>
-        <div className="flex items-center gap-4">
+        {/* Action icons pinned right */}
+        <div className="ml-auto flex items-center gap-4">
           <button className="text-[#0F1111]">
             <Heart size={22} strokeWidth={1.5} />
           </button>

@@ -1,7 +1,20 @@
 import { useState } from "react";
+import { MapPin } from "lucide-react";
+
+function PrimeBadge() {
+  return (
+    <span className="inline-flex items-center gap-[2px]">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#00A8E1" strokeWidth="2" />
+        <path d="M9 12l2 2 4-4" stroke="#00A8E1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <span className="text-[#00A8E1] font-bold italic text-[13px] tracking-tight">prime</span>
+    </span>
+  );
+}
 
 export function ProductInfo() {
-  const [condition, setCondition] = useState<"new" | "used">("new");
+  const [plan, setPlan] = useState<"subscribe" | "onetime">("onetime");
 
   return (
     <div className="bg-white border-t-8 border-gray-100 px-4 pt-4 pb-3">
@@ -11,61 +24,84 @@ export function ProductInfo() {
 
       {/* Ways to buy */}
       <p className="text-sm text-[#0F1111] mb-3">
-        Ways to buy: <span className="font-bold">Buy New</span>
+        Ways to buy: <span className="font-bold">One-time purchase</span>
       </p>
 
-      {/* Condition pills */}
+      {/* Plan pills */}
       <div className="flex gap-2 mb-4">
         <button
-          onClick={() => setCondition("new")}
+          onClick={() => setPlan("subscribe")}
           className={`flex-1 rounded p-2 text-left transition-all ${
-            condition === "new" ? "border-2 border-[#146eb4]" : "border border-gray-300"
+            plan === "subscribe" ? "border-2 border-[#146eb4]" : "border border-gray-300"
           }`}
         >
-          <p className="text-[13px] font-bold text-[#0F1111]">Buy New</p>
-          <p className="text-[15px] font-bold text-[#0F1111]">
-            £399<sup className="text-[10px] align-super">00</sup>
+          <div className="flex items-center gap-1 mb-[2px]">
+            <p className="text-[12px] font-bold text-[#0F1111]">Subscribe &amp; Save</p>
+            <span className="text-[10px]">🏷</span>
+          </div>
+          <p className="text-[14px] font-bold text-[#0F1111]">
+            £13<sup className="text-[9px] align-super">59</sup>{" "}
+            <span className="text-[11px] font-normal text-gray-500">(£4.25 / l)</span>
           </p>
-          <p className="text-[12px] text-gray-500">Sat 7 Mar</p>
+          <p className="text-[11px] text-gray-500">Tomorrow, 6 Mar</p>
         </button>
         <button
-          onClick={() => setCondition("used")}
+          onClick={() => setPlan("onetime")}
           className={`flex-1 rounded p-2 text-left transition-all ${
-            condition === "used" ? "border-2 border-[#146eb4]" : "border border-gray-300"
+            plan === "onetime" ? "border-2 border-[#146eb4]" : "border border-gray-300"
           }`}
         >
-          <p className="text-[12px] text-gray-500">Used – Very Good</p>
-          <p className="text-[15px] font-bold text-[#0F1111]">
-            £280<sup className="text-[10px] align-super">85</sup>
+          <p className="text-[12px] font-bold text-[#0F1111] mb-[2px]">One-time purchase</p>
+          <p className="text-[14px] font-bold text-[#0F1111]">
+            £14<sup className="text-[9px] align-super">00</sup>{" "}
+            <span className="text-[11px] font-normal text-gray-500">(£4.47 / l)</span>
           </p>
-          <p className="text-[12px] text-gray-500">Sun 8 Mar</p>
+          <p className="text-[11px] text-gray-500">Tomorrow, 6 Mar</p>
         </button>
       </div>
 
       {/* Big price */}
-      <div className="flex items-baseline gap-2 mb-2">
+      <div className="flex items-baseline gap-2 mb-1">
         <span className="text-[32px] font-bold text-[#0F1111] leading-none">
-          £399<sup className="text-[18px] align-super font-bold">00</sup>
+          £14<sup className="text-[18px] align-super font-bold">00</sup>
         </span>
-        <button className="text-[#007185] text-sm">Price history</button>
+        <span className="text-sm text-gray-500">(£4.47 / l)</span>
+      </div>
+      <button className="text-[#007185] text-sm mb-2">Price history</button>
+
+      {/* Prime + delivery */}
+      <p className="text-sm text-[#0F1111] mb-1">
+        <PrimeBadge /> <span className="font-bold">Tomorrow</span>
+      </p>
+
+      {/* FREE Returns */}
+      <p className="text-sm text-[#007600] mb-2">FREE Returns</p>
+
+      {/* Save 5% banner */}
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
+        <span className="bg-[#097138] text-white text-[12px] font-bold px-2 py-[2px] rounded-sm">
+          Save 5%
+        </span>
+        <span className="text-sm text-[#0F1111]">
+          on any 4{" "}
+          <button className="text-[#007185]">Qualifying items ›</button>
+          {" "}|{" "}
+          <button className="text-[#007185]">Terms</button>
+        </span>
       </div>
 
-      {/* Spread the cost */}
-      <p className="text-sm text-[#0F1111] mb-2">
-        Or <span className="font-bold">Spread the cost at 0% APR.</span> Subject to financial status &amp; eligibility. Credit broker: Amazon EU S.a.r.l, Lender: Barclays.{" "}
-        <button className="text-[#007185]">Select plan</button>
+      {/* Free delivery */}
+      <p className="text-sm text-[#0F1111] mb-1">
+        FREE delivery <span className="font-bold">Tomorrow, 6 March</span>. Order within{" "}
+        <span className="font-bold text-[#c7511f]">8 hrs 41 mins</span>.{" "}
+        <button className="text-[#007185]">Details</button>
       </p>
 
-      {/* Gift card offer */}
-      <p className="text-sm text-[#0F1111] mb-1">
-        <span className="line-through text-gray-500">£399.00</span>{" "}
-        <span className="font-bold">£379.00</span> with a Gift Card if approved for{" "}
-        <button className="text-[#007185]">The Amazon Barclaycard.</button>{" "}
-        Representative 28.9% APR variable.
-      </p>
-      <p className="text-xs text-gray-500">
-        Credit broker: Amazon EU S.A.R.L, Lender: Barclays. T&amp;Cs apply.
-      </p>
+      {/* Deliver to */}
+      <div className="flex items-center gap-1">
+        <MapPin size={14} className="text-[#0F1111] flex-shrink-0" />
+        <button className="text-[#007185] text-sm">Deliver to acsah - London N1 3</button>
+      </div>
     </div>
   );
 }
