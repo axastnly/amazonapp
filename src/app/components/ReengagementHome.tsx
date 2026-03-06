@@ -125,7 +125,7 @@ function ReviewNudge() {
           <img src={asset("/ariel-1.png")} alt="Ariel" className="h-full w-full object-contain" />
         </div>
         <div className="flex flex-col gap-0.5 flex-1">
-          <p className="text-[13px] text-gray-800 leading-snug">3 people deciding right now.</p>
+          <p className="text-[13px] text-black leading-snug">3 people deciding right now.</p>
           <p className="text-[11px] text-gray-400 mb-1.5">Ordered 1 month ago</p>
           {confirmed ? (
             <div className="flex items-center gap-2">
