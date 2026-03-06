@@ -9,7 +9,7 @@ import { ProductActions } from "./components/ProductActions";
 import { ProductDetails } from "./components/ProductDetails";
 import { CustomerReviews } from "./components/CustomerReviews";
 
-export default function App() {
+export default function App({ onBack }: { onBack?: () => void } = {}) {
   const productImages = [
     "/ariel-1.jpg",
     "/ariel-2.jpg",
@@ -31,20 +31,6 @@ export default function App() {
         <ProductDetails />
         <CustomerReviews />
 
-        <div className="bg-white px-4 py-6 text-center text-sm text-gray-600 border-t-8 border-gray-100">
-          <p className="mb-2">
-            See personalized recommendations
-          </p>
-          <button className="w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-            Sign in
-          </button>
-          <p className="mt-2">
-            New customer?{" "}
-            <button className="text-[#007185]">
-              Start here.
-            </button>
-          </p>
-        </div>
       </div>
       {/* Bottom padding so content clears the nav bar */}
       <div className="h-[60px]" />
@@ -66,7 +52,7 @@ export default function App() {
         <button className="p-2 text-gray-600">
           <Menu size={24} />
         </button>
-        <button className="p-2 relative w-10 h-10 flex items-center justify-center">
+        <button onClick={onBack} className="p-2 relative w-10 h-10 flex items-center justify-center">
           <div className="w-6 h-6 rounded-full bg-[#FF6900] flex items-end justify-end p-[2px]">
             <div className="w-[10px] h-[10px] rounded-full bg-[#3366CC]" />
           </div>
