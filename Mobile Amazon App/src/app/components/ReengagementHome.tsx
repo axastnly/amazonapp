@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Search,
   Mic,
@@ -11,45 +11,63 @@ import {
   Menu,
   Star,
   ChevronRight,
-  Eye,
-  RotateCcw,
+  Users,
 } from "lucide-react";
 
 interface Props {
   onBack: () => void;
 }
 
-// ── Hero carousel ──────────────────────────────────────────────────────────
+// ── Hero banner carousel — click OR swipe ─────────────────────────────────
 function HeroBannerCarousel() {
   const [slide, setSlide] = useState(0);
+  const touchStartX = useRef<number | null>(null);
   const slides = ["/banner.jpg", "/banner2.jpg"];
 
+  const prev = () => setSlide((s) => (s === 0 ? slides.length - 1 : s - 1));
+  const next = () => setSlide((s) => (s + 1) % slides.length);
+
   return (
-    <div className="relative mx-3 mt-3 rounded-2xl overflow-hidden shadow" style={{ height: 200 }}>
-      <img
-        src={slides[slide]}
-        alt={`Promotional banner ${slide + 1}`}
-        className="w-full h-full object-cover"
-      />
-      <button
-        aria-label="Previous banner"
-        onClick={() => setSlide((s) => (s === 0 ? slides.length - 1 : s - 1))}
-        className="absolute left-0 top-0 bottom-0 w-1/3"
-      />
-      <button
-        aria-label="Next banner"
-        onClick={() => setSlide((s) => (s + 1) % slides.length)}
-        className="absolute right-0 top-0 bottom-0 w-1/3"
-      />
+    <div
+      className="relative overflow-hidden"
+      style={{ height: 200 }}
+      onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+      onTouchEnd={(e) => {
+        if (touchStartX.current === null) return;
+        const dx = e.changedTouches[0].clientX - touchStartX.current;
+        if (dx < -40) next();
+        else if (dx > 40) prev();
+        touchStartX.current = null;
+      }}
+    >
+      {/* Slides */}
+      <div
+        className="flex h-full transition-transform duration-300 ease-in-out"
+        style={{ transform: `translateX(-${slide * 100}%)`, width: `${slides.length * 100}%` }}
+      >
+        {slides.map((src, i) => (
+          <img
+            key={i}
+            src={src}
+            alt={`Promotional banner ${i + 1}`}
+            className="h-full object-cover"
+            style={{ width: `${100 / slides.length}%` }}
+          />
+        ))}
+      </div>
+
+      {/* Tap zones for non-touch (mouse) */}
+      <button aria-label="Previous banner" onClick={prev} className="absolute left-0 top-0 bottom-0 w-1/3" />
+      <button aria-label="Next banner"     onClick={next} className="absolute right-0 top-0 bottom-0 w-1/3" />
+
+      {/* Dots */}
       <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5">
         {slides.map((_, i) => (
           <button
             key={i}
             aria-label={`Go to slide ${i + 1}`}
             onClick={() => setSlide(i)}
-            className={`w-2 h-2 rounded-full transition-colors ${
-              i === slide ? "bg-white" : "bg-white/40"
-            }`}
+            className={`w-2 h-2 rounded-full transition-colors ${i === slide ? "bg-white" : "bg-white/40"}`}
           />
         ))}
       </div>
@@ -58,17 +76,7 @@ function HeroBannerCarousel() {
 }
 
 // ── Deal card ──────────────────────────────────────────────────────────────
-function DealCard({
-  img,
-  discount,
-  tag,
-  bg,
-}: {
-  img: string;
-  discount: string;
-  tag: string;
-  bg: string;
-}) {
+function DealCard({ img, discount, tag, bg }: { img: string; discount: string; tag: string; bg: string }) {
   return (
     <div className={`relative rounded-lg overflow-hidden ${bg} flex flex-col`} style={{ height: 140 }}>
       <span className="absolute top-2 left-2 bg-[#CC0C39] text-white text-[10px] font-bold px-2 py-0.5 rounded z-10">
@@ -77,9 +85,7 @@ function DealCard({
       <div className="flex-1 flex items-center justify-center p-2">
         <img src={img} alt="" className="w-20 h-20 object-contain" />
       </div>
-      <p className="text-[10px] font-semibold text-[#CC0C39] bg-white/90 w-full text-center py-1">
-        {tag}
-      </p>
+      <p className="text-[10px] font-semibold text-[#CC0C39] bg-white/90 w-full text-center py-1">{tag}</p>
     </div>
   );
 }
@@ -87,72 +93,87 @@ function DealCard({
 // ── Sponsored product card ─────────────────────────────────────────────────
 function SponsoredCard({ img, name, price }: { img: string; name: string; price: string }) {
   return (
-    <div className="shrink-0 w-32 bg-white rounded-xl border border-gray-200 p-2 flex flex-col items-center gap-1">
-      <div className="w-full h-24 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
+    <div className="shrink-0 w-32 bg-[#f0f0f0] rounded-xl overflow-hidden flex flex-col">
+      <div className="w-full h-24 flex items-center justify-center p-2">
         <img src={img} alt={name} className="w-full h-full object-contain" />
       </div>
-      <p className="text-[10px] text-gray-700 text-center leading-tight line-clamp-2 w-full">{name}</p>
-      <p className="text-[11px] font-bold text-gray-900 self-start">{price}</p>
-      <span className="text-[9px] text-gray-400 self-start">Sponsored</span>
+      <div className="px-2 pb-2">
+        <p className="text-[10px] text-gray-700 leading-tight line-clamp-2">{name}</p>
+        <p className="text-[12px] font-bold text-gray-900 mt-0.5">{price}</p>
+        <span className="text-[9px] text-gray-400">Sponsored</span>
+      </div>
     </div>
   );
 }
 
-// ── Order Again product card ───────────────────────────────────────────────
-function OrderAgainCard({
-  img,
-  name,
-  price,
-  lastOrdered,
-}: {
-  img: string;
-  name: string;
-  price: string;
-  lastOrdered: string;
+// ── Order Again product card — grey card, price inside, no button ──────────
+function OrderAgainCard({ img, name, price, lastOrdered }: {
+  img: string; name: string; price: string; lastOrdered: string;
 }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-2 flex flex-col">
-      <div className="w-full aspect-square bg-gray-50 rounded-lg overflow-hidden flex items-center justify-center mb-2">
+    <div className="bg-[#f0f0f0] rounded-xl overflow-hidden flex flex-col">
+      <div className="w-full aspect-square flex items-center justify-center p-3">
         <img src={img} alt={name} className="w-full h-full object-contain" />
       </div>
-      <p className="text-[11px] text-gray-800 font-medium leading-tight line-clamp-2 flex-1">{name}</p>
-      <p className="text-[13px] font-bold text-gray-900 mt-1">{price}</p>
-      <p className="text-[10px] text-gray-400 mt-0.5">Ordered {lastOrdered}</p>
-      <button className="mt-2 w-full bg-[#FF9900] text-black text-[11px] font-semibold rounded-lg py-1.5 flex items-center justify-center gap-1">
-        <RotateCcw size={10} />
-        Add to basket
-      </button>
+      <div className="px-2 pb-3">
+        <p className="text-[11px] text-gray-800 leading-tight line-clamp-2">{name}</p>
+        <p className="text-[13px] font-bold text-gray-900 mt-1">{price}</p>
+        <p className="text-[10px] text-gray-500 mt-0.5">Ordered {lastOrdered}</p>
+      </div>
     </div>
   );
 }
 
-// ── Interactive star rating ────────────────────────────────────────────────
-function StarRatingInput() {
+// ── Amazon-style review nudge ──────────────────────────────────────────────
+function ReviewNudge() {
   const [hovered, setHovered] = useState(0);
   const [selected, setSelected] = useState(0);
+
   return (
-    <div className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((n) => (
-        <button
-          key={n}
-          aria-label={`Rate ${n} star${n > 1 ? "s" : ""}`}
-          onMouseEnter={() => setHovered(n)}
-          onMouseLeave={() => setHovered(0)}
-          onClick={() => setSelected(n)}
-        >
-          <Star
-            size={18}
-            className={
-              n <= (hovered || selected)
-                ? "text-[#FF9900] fill-[#FF9900]"
-                : "text-gray-300 fill-gray-300"
-            }
-          />
-        </button>
-      ))}
-      {selected > 0 && (
-        <span className="text-[11px] text-[#007185] ml-2">Thanks!</span>
-      )}
+    <div className="bg-white rounded-xl border border-gray-200 px-3 py-3">
+      {/* Header row: image + copy */}
+      <div className="flex items-start gap-3">
+        <div className="w-14 h-14 rounded-lg bg-[#f0f0f0] shrink-0 overflow-hidden flex items-center justify-center">
+          <img src="/p7.jpg" alt="CeraVe Hydrating Cleanser" className="w-full h-full object-contain" />
+        </div>
+        <div className="flex-1">
+          <p className="text-[14px] font-semibold text-gray-900 leading-snug">
+            You read reviews before buying this.
+          </p>
+          <div className="flex items-center gap-1.5 mt-1">
+            <Users size={12} className="text-gray-400 shrink-0" />
+            <p className="text-[12px] text-gray-500">3 people are deciding on it right now.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="border-t border-gray-100 mt-3 pt-3">
+        <p className="text-[12px] text-gray-600 mb-1.5">How would you rate it?</p>
+        <div className="flex items-center gap-0.5">
+          {[1, 2, 3, 4, 5].map((n) => (
+            <button
+              key={n}
+              aria-label={`Rate ${n} star${n > 1 ? "s" : ""}`}
+              onMouseEnter={() => setHovered(n)}
+              onMouseLeave={() => setHovered(0)}
+              onClick={() => setSelected(n)}
+            >
+              <Star
+                size={28}
+                className={
+                  n <= (hovered || selected)
+                    ? "text-[#FF9900] fill-[#FF9900]"
+                    : "text-gray-300 fill-gray-300"
+                }
+              />
+            </button>
+          ))}
+          {selected > 0 && (
+            <span className="text-[12px] text-[#007185] ml-2 font-medium">Write a review →</span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -160,7 +181,7 @@ function StarRatingInput() {
 // ── Keep shopping category pill ────────────────────────────────────────────
 function CategoryPill({ img, label }: { img: string; label: string }) {
   return (
-    <div className="shrink-0 w-24 bg-white rounded-xl border border-gray-200 flex flex-col items-center py-2 gap-1.5 overflow-hidden">
+    <div className="shrink-0 w-24 bg-[#f0f0f0] rounded-xl flex flex-col items-center py-2 gap-1.5 overflow-hidden">
       <div className="w-14 h-14 flex items-center justify-center overflow-hidden">
         <img src={img} alt={label} className="w-full h-full object-contain" />
       </div>
@@ -174,28 +195,17 @@ export function ReengagementHome({ onBack }: Props) {
   const categories = ["Everyday Essentials", "Grocery", "Beauty", "Electronics", "Home"];
 
   const orderAgainProducts = [
-    { img: "/ariel-1.jpg",  name: "Ariel All-in-1 PODS Laundry Detergent",      price: "£12.99", lastOrdered: "2 months ago" },
-    { img: "/p1.jpg",       name: "NIVEA Cashmere & Cottonseed Shower 250ml",    price: "£3.50",  lastOrdered: "3 months ago" },
-    { img: "/p3.jpg",       name: "OGX Argan Oil of Morocco Shampoo 385ml",      price: "£8.49",  lastOrdered: "1 month ago"  },
-    { img: "/p2.jpg",       name: "Binit 40 Everyday Refuse Sacks",              price: "£5.99",  lastOrdered: "6 weeks ago"  },
+    { img: "/p7.jpg",     name: "CeraVe Hydrating Cleanser 236ml",          price: "£9.50",  lastOrdered: "1 month ago"  },
+    { img: "/p1.jpg",     name: "NIVEA Cashmere & Cottonseed Shower 250ml",  price: "£3.50",  lastOrdered: "3 months ago" },
+    { img: "/p3.jpg",     name: "OGX Argan Oil of Morocco Shampoo 385ml",    price: "£8.49",  lastOrdered: "6 weeks ago"  },
+    { img: "/p2.jpg",     name: "Binit 40 Everyday Refuse Sacks",            price: "£5.99",  lastOrdered: "2 months ago" },
   ];
 
   return (
     <div className="min-h-screen bg-[#f3f3f3] max-w-md mx-auto flex flex-col">
 
-      {/* ── Sticky orange header ── */}
-      <div className="sticky top-0 z-30 bg-[#FF9900]">
-        {/* Amazon logo — actual image in white pill so it reads cleanly on orange */}
-        <div className="flex items-center justify-center pt-3 pb-1.5">
-          <div className="bg-white rounded-lg px-3 py-1">
-            <img
-              src="/amazon-logo.webp"
-              alt="Amazon"
-              className="h-6 w-auto object-contain"
-            />
-          </div>
-        </div>
-
+      {/* ── Sticky header — no logo, just search + cats ── */}
+      <div className="sticky top-0 z-30 bg-[#FF9900] pt-2">
         {/* Search bar */}
         <div className="px-3 pb-2">
           <div className="flex items-center bg-white rounded-full px-3 py-2 gap-2">
@@ -206,7 +216,7 @@ export function ReengagementHome({ onBack }: Props) {
           </div>
         </div>
 
-        {/* Category chips — black text on orange = 10.13:1 contrast (WCAG AAA) */}
+        {/* Category chips */}
         <div className="flex items-center gap-2 px-3 pb-2 overflow-x-auto no-scrollbar">
           <button className="shrink-0 flex items-center gap-1 bg-white/20 text-black text-[12px] font-medium px-3 py-1.5 rounded-full">
             <MapPin size={12} />
@@ -241,8 +251,6 @@ export function ReengagementHome({ onBack }: Props) {
         <div className="mt-4 px-3">
           <p className="text-[17px] font-bold text-gray-900 mb-2">Recommended deals for you</p>
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-
-            {/* Card 1 — Deals for you */}
             <div className="shrink-0 w-60 bg-white rounded-xl border border-gray-200 p-3">
               <div className="flex items-center justify-between mb-2">
                 <p className="text-[13px] font-bold text-gray-900">Deals for you</p>
@@ -255,8 +263,6 @@ export function ReengagementHome({ onBack }: Props) {
                 <DealCard img="/p5.jpg"  discount="37% off" tag="Limited time"  bg="bg-gray-100" />
               </div>
             </div>
-
-            {/* Card 2 — Based on your shopping */}
             <div className="shrink-0 w-60 bg-white rounded-xl border border-gray-200 p-3">
               <div className="flex items-center justify-between mb-2">
                 <p className="text-[13px] font-bold text-gray-900">Based on your shopping</p>
@@ -272,23 +278,12 @@ export function ReengagementHome({ onBack }: Props) {
           </div>
         </div>
 
-        {/* ── Ready to restock? section ── */}
+        {/* ── Ready to restock? ── */}
         <div className="mt-5 px-3">
-          <p className="text-[17px] font-bold text-gray-900">Ready to restock?</p>
+          <p className="text-[17px] font-bold text-gray-900 mb-3">Ready to restock?</p>
 
-          {/* Nudge + review prompt */}
-          <div className="mt-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 flex flex-col gap-2">
-            <div className="flex items-center gap-1.5 text-[12px] text-gray-700">
-              <Eye size={13} className="text-amber-500 shrink-0" />
-              <span>
-                <span className="font-semibold text-amber-700">142 people</span> looking at your past buys right now
-              </span>
-            </div>
-            <div className="border-t border-amber-100 pt-2">
-              <p className="text-[12px] text-gray-600 mb-1">How was your last Ariel order?</p>
-              <StarRatingInput />
-            </div>
-          </div>
+          {/* Amazon-style review nudge */}
+          <ReviewNudge />
 
           {/* 2×2 product grid */}
           <div className="grid grid-cols-2 gap-2 mt-3">
@@ -299,18 +294,6 @@ export function ReengagementHome({ onBack }: Props) {
           <button className="mt-2 text-[13px] font-semibold text-[#007185]">
             See more past orders →
           </button>
-        </div>
-
-        {/* Keep shopping for */}
-        <div className="mt-5 px-3">
-          <p className="text-[17px] font-bold text-gray-900 mb-2">Keep shopping for</p>
-          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-            <CategoryPill img="/p12.jpg"   label="Skincare"  />
-            <CategoryPill img="/ariel-1.jpg" label="Laundry"   />
-            <CategoryPill img="/p5.jpg"    label="Bedding"   />
-            <CategoryPill img="/p11.jpg"   label="Tech"      />
-            <CategoryPill img="/p6.jpg"    label="Fashion"   />
-          </div>
         </div>
 
         <div className="h-6" />
@@ -327,9 +310,9 @@ export function ReengagementHome({ onBack }: Props) {
           </span>
         </button>
         <button className="p-2 text-gray-600" aria-label="Menu"><Menu size={24} /></button>
-        <button onClick={onBack} aria-label="Back to prototype hub" className="p-2 relative w-10 h-10 flex items-center justify-center">
-          <div className="w-6 h-6 rounded-full bg-[#FF6900] flex items-end justify-end p-[2px]">
-            <div className="w-[10px] h-[10px] rounded-full bg-[#3366CC]" />
+        <button onClick={onBack} aria-label="Back to prototype hub" className="p-2">
+          <div className="w-7 h-7 rounded-full bg-[#FF6900] flex items-end justify-end p-[3px]">
+            <div className="w-[11px] h-[11px] rounded-full bg-[#3366CC]" />
           </div>
         </button>
       </div>
