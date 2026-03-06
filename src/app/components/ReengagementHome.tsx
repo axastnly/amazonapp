@@ -129,10 +129,10 @@ function ReviewNudge() {
           <p className="text-[11px] text-gray-400 mb-1.5">Ordered 1 month ago</p>
           {confirmed ? (
             <div className="flex items-center gap-2">
-              <div className="flex gap-0.5">
+              <div className="flex">
                 {[1, 2, 3, 4, 5].map((n) => (
-                  <Star key={n} size={22}
-                    className={n <= selected ? "text-[#FF9900] fill-[#FF9900]" : "text-gray-300 fill-gray-300"} />
+                  <Star key={n} size={13}
+                    className={n <= selected ? "fill-[#ff9900] text-[#ff9900]" : "fill-gray-300 text-gray-300"} />
                 ))}
               </div>
               <span className="text-[12px] text-gray-600">Thanks!</span>
@@ -141,7 +141,7 @@ function ReviewNudge() {
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-0.5">
+            <div className="flex items-center">
               {[1, 2, 3, 4, 5].map((n) => (
                 <button key={n} aria-label={`${n} star`}
                   onMouseEnter={() => setHovered(n)}
@@ -149,7 +149,7 @@ function ReviewNudge() {
                   onClick={() => handleStar(n)}
                 >
                   <Star size={26}
-                    className={n <= (hovered || selected) ? "text-[#FF9900] fill-[#FF9900]" : "text-gray-300 fill-gray-300"} />
+                    className={n <= (hovered || selected) ? "fill-[#ff9900] text-[#ff9900]" : "fill-gray-300 text-gray-300"} />
                 </button>
               ))}
             </div>
