@@ -4,34 +4,16 @@ interface Props {
   onFlow: (flow: "reorder" | "reengagement") => void;
 }
 
-// Amazon logo — black on #FF9900 = 10.13:1 contrast (WCAG AAA)
-function AmazonLogo() {
-  return (
-    <div className="flex flex-col items-center leading-none">
-      <span className="text-[28px] font-black tracking-[-1px] text-black">
-        amazon
-      </span>
-      <svg viewBox="0 0 80 12" className="w-20 h-2.5 mt-[-2px]">
-        <path
-          d="M4 2 Q40 14 76 2"
-          stroke="#000"
-          strokeWidth="2.5"
-          fill="none"
-          strokeLinecap="round"
-        />
-        <polygon points="74,0 80,4 72,6" fill="#000" />
-      </svg>
-    </div>
-  );
-}
-
 export function PrototypeHub({ onFlow }: Props) {
   return (
     <div className="min-h-screen bg-[#f3f3f3] flex flex-col max-w-md mx-auto">
       {/* Amazon-style orange header */}
       <div className="bg-[#FF9900] px-4 pt-10 pb-5">
         <div className="flex items-center justify-center mb-2">
-          <AmazonLogo />
+          {/* Actual Amazon logo in white pill — logo has white bg, reads cleanly on orange */}
+          <div className="bg-white rounded-lg px-3 py-1">
+            <img src="/amazon-logo.webp" alt="Amazon" className="h-7 w-auto object-contain" />
+          </div>
         </div>
         <p className="text-center text-[13px] text-black/60 mt-1">Prototype — choose a flow</p>
       </div>
