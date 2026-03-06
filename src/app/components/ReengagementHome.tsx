@@ -22,7 +22,7 @@ interface Props {
 function HeroBannerCarousel() {
   const [slide, setSlide] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const slides = [asset("/banner.jpg"), asset("/banner2.jpg")];
+  const slides = [asset("/banner.png"), asset("/banner2.png")];
 
   const goTo = (i: number) => {
     scrollRef.current?.scrollTo({ left: scrollRef.current.clientWidth * i, behavior: "smooth" });
