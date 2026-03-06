@@ -8,14 +8,14 @@ export function PrototypeHub({ onFlow }: Props) {
   return (
     <div className="min-h-screen bg-[#f3f3f3] flex flex-col max-w-md mx-auto">
       {/* Amazon-style orange header */}
-      <div className="bg-[#FF9900] px-4 pt-10 pb-4">
-        <div className="flex items-center justify-center mb-1">
-          {/* Amazon wordmark */}
-          <svg viewBox="0 0 120 36" className="h-8 w-auto fill-white" xmlns="http://www.w3.org/2000/svg">
-            <text x="0" y="28" fontFamily="Arial" fontWeight="bold" fontSize="30" fill="white">amazon</text>
-          </svg>
+      <div className="bg-[#FF9900] px-4 pt-10 pb-5">
+        <div className="flex items-center justify-center mb-2">
+          {/* Actual Amazon logo in white pill — logo has white bg, reads cleanly on orange */}
+          <div className="bg-white rounded-lg px-3 py-1">
+            <img src="/amazon-logo.webp" alt="Amazon" className="h-7 w-auto object-contain" />
+          </div>
         </div>
-        <p className="text-center text-[13px] text-white/80 mt-1">Prototype — choose a flow</p>
+        <p className="text-center text-[13px] text-black/60 mt-1">Prototype — choose a flow</p>
       </div>
 
       {/* Flow cards */}
@@ -35,7 +35,7 @@ export function PrototypeHub({ onFlow }: Props) {
               <p className="text-[13px] text-gray-500 mt-1 leading-snug">
                 User quickly reorders a frequently bought product — Ariel laundry pods.
               </p>
-              <div className="mt-3 inline-block bg-[#FF9900] text-white text-[13px] font-semibold rounded-lg px-4 py-1.5">
+              <div className="mt-3 inline-block bg-[#FF9900] text-black text-[13px] font-semibold rounded-lg px-4 py-1.5">
                 Start →
               </div>
             </div>
@@ -65,6 +65,10 @@ export function PrototypeHub({ onFlow }: Props) {
         </button>
       </div>
 
+      {/* Navigation hint */}
+      <p className="text-center text-[12px] text-gray-500 px-6 pb-3">
+        Tap the avatar icon (bottom right) on any screen to return here.
+      </p>
       <p className="text-center text-[11px] text-gray-400 pb-8">Internal prototype — not for distribution</p>
     </div>
   );
